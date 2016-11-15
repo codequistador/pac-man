@@ -30,8 +30,6 @@ export default Ember.Component.extend(KeyboardShortcuts, {
   screenHeight: 15,
   clearScreen: function() {
     let ctx = this.get('ctx');
-    let screenPixelWidth = this.get('screenWidth') * this.get('squareSize');
-    let screenPixelHeight = this.get('screenHeight') * this.get('squareSize');
 
     ctx.clearRect(0, 0, this.get('screenPixelWidth'), this.get('screenPixelHeight'));
   },
@@ -56,8 +54,8 @@ export default Ember.Component.extend(KeyboardShortcuts, {
     let pacOutOfBounds = x < 0 ||
                          y < 0 ||
                          x >= screenWidth ||
-                         y >= screenHeight
-    return pacOutOfBounds
+                         y >= screenHeight;
+    return pacOutOfBounds;
   },
 
   ctx: Ember.computed(function(){
