@@ -4,6 +4,7 @@ import KeyboardShortcuts from 'ember-keyboard-shortcuts/mixins/component';
 export default Ember.Component.extend(KeyboardShortcuts, {
 
   didInsertElement: function() {
+    this.drawWalls();
     this.drawCircle();
   },
 
@@ -37,11 +38,12 @@ export default Ember.Component.extend(KeyboardShortcuts, {
   movePacMan: function(direction, amount) {
     this.incrementProperty(direction, amount);
 
-    if (this.collidedWithBorder()) {
+    if (this.collidedWithBorder() || this.collidedWithWall()) {
       this.decrementProperty(direction, amount);
     }
 
     this.clearScreen();
+    this.drawWalls();
     this.drawCircle();
   },
 
@@ -56,6 +58,35 @@ export default Ember.Component.extend(KeyboardShortcuts, {
                          x >= screenWidth ||
                          y >= screenHeight;
     return pacOutOfBounds;
+  },
+
+  collidedWithWall: function() {
+    let x = this.get('x');
+    let y = this.get('y');
+    let walls = this.get('walls');
+
+    return walls.any(function(wall){
+      return x === wall.x && 
+             y === wall.y;
+    });
+  },
+
+  walls: [
+    {x: 1, y: 1},
+    {x: 8, y: 5}
+  ],
+  drawWalls: function() {
+    let squareSize = this.get('squareSize');
+    let ctx = this.get('ctx');
+    ctx.fillStyle = '#000';
+
+    let walls = this.get('walls');
+    walls.forEach(function(wall){
+      ctx.fillRect(wall.x * squareSize,
+                   wall.y * squareSize,
+                   squareSize,
+                   squareSize);
+    });
   },
 
   ctx: Ember.computed(function(){
