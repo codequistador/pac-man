@@ -7,34 +7,57 @@ export default Ember.Component.extend(KeyboardShortcuts, {
     this.drawCircle();
   },
 
-  x: 50,
-  y: 100,
+  x: 1,
+  y: 2,
   squareSize: 40,
   drawCircle: function() {
     let ctx = this.get('ctx');
     let x = this.get('x');
     let y = this.get('y');
-    let radius = this.get('squareSize')/2;
+    let squareSize = this.get('squareSize');
 
-    ctx.fillStyle = '#000';
+    let pixelX = (x+1/2) * squareSize;
+    let pixelY = (y+1/2) * squareSize;
+
+    ctx.fillStyle = '#fff';
     ctx.beginPath();
-    ctx.arc(x, y, radius, 0, Math.PI * 2, false);
+    ctx.arc(pixelX, pixelY, squareSize/2, 0, Math.PI * 2, false);
     ctx.closePath();
     ctx.fill();
   },
 
+  screenWidth: 20,
+  screenHeight: 15,
   clearScreen: function() {
     let ctx = this.get('ctx');
-    let screenWidth = 800;
-    let screenHeight = 600;
+    let screenPixelWidth = this.get('screenWidth') * this.get('squareSize');
+    let screenPixelHeight = this.get('screenHeight') * this.get('squareSize');
 
-    ctx.clearRect(0, 0, screenWidth, screenHeight);
+    ctx.clearRect(0, 0, screenPixelWidth, screenPixelHeight);
   },
 
   movePacMan: function(direction, amount) {
     this.incrementProperty(direction, amount);
+
+    if (this.collidedWithBorder()) {
+      this.decrementProperty(direction, amount);
+    }
+
     this.clearScreen();
     this.drawCircle();
+  },
+
+  collidedWithBorder: function() {
+    let x = this.get('x');
+    let y = this.get('y');
+    let screenHeight = this.get('screenHeight');
+    let screenWidth = this.get('screenWidth');
+
+    let pacOutOfBounds = x < 0 ||
+                         y < 0 ||
+                         x >= screenWidth ||
+                         y >= screenHeight
+    return pacOutOfBounds
   },
 
   ctx: Ember.computed(function(){
@@ -44,10 +67,10 @@ export default Ember.Component.extend(KeyboardShortcuts, {
   }),
 
   keyboardShortcuts: {
-    up: function() { this.movePacMan('y', -1 * this.get('squareSize')); },
-    down: function() { this.movePacMan('y', this.get('squareSize')); },
-    left: function() { this.movePacMan('x', -1 * this.get('squareSize')); },
-    right: function() { this.movePacMan('x', this.get('squareSize')); },
+    up: function() { this.movePacMan('y', -1); },
+    down: function() { this.movePacMan('y', 1); },
+    left: function() { this.movePacMan('x', -1); },
+    right: function() { this.movePacMan('x', 1); },
   },
 
 });
