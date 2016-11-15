@@ -8,6 +8,7 @@ export default Ember.Component.extend(KeyboardShortcuts, {
     this.drawCircle();
   },
 
+  // Drawing and erasing
   x: 1,
   y: 2,
   squareSize: 40,
@@ -27,6 +28,24 @@ export default Ember.Component.extend(KeyboardShortcuts, {
     ctx.fill();
   },
 
+  walls: [
+    {x: 1, y: 1},
+    {x: 8, y: 5}
+  ],
+  drawWalls: function() {
+    let squareSize = this.get('squareSize');
+    let ctx = this.get('ctx');
+    ctx.fillStyle = '#000';
+
+    let walls = this.get('walls');
+    walls.forEach(function(wall){
+      ctx.fillRect(wall.x * squareSize,
+                   wall.y * squareSize,
+                   squareSize,
+                   squareSize);
+    });
+  },
+
   screenWidth: 20,
   screenHeight: 15,
   clearScreen: function() {
@@ -35,6 +54,7 @@ export default Ember.Component.extend(KeyboardShortcuts, {
     ctx.clearRect(0, 0, this.get('screenPixelWidth'), this.get('screenPixelHeight'));
   },
 
+  // Moving and collisions
   movePacMan: function(direction, amount) {
     this.incrementProperty(direction, amount);
 
@@ -71,24 +91,7 @@ export default Ember.Component.extend(KeyboardShortcuts, {
     });
   },
 
-  walls: [
-    {x: 1, y: 1},
-    {x: 8, y: 5}
-  ],
-  drawWalls: function() {
-    let squareSize = this.get('squareSize');
-    let ctx = this.get('ctx');
-    ctx.fillStyle = '#000';
-
-    let walls = this.get('walls');
-    walls.forEach(function(wall){
-      ctx.fillRect(wall.x * squareSize,
-                   wall.y * squareSize,
-                   squareSize,
-                   squareSize);
-    });
-  },
-
+  // Computed Properties
   ctx: Ember.computed(function(){
     let canvas = document.getElementById("myCanvas");
     let ctx = canvas.getContext("2d");
