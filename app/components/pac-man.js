@@ -16,8 +16,8 @@ export default Ember.Component.extend(KeyboardShortcuts, {
     {x: 1, y: 1},
     {x: 8, y: 5}
   ],
-  screenWidth: 20,
-  screenHeight: 15,
+  screenWidth: 20, // bound to html5 canvas
+  screenHeight: 15, // bound to html5 canvas
 
   // Drawing and erasing
   drawCircle: function() {
