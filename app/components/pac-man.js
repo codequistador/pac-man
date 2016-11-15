@@ -33,7 +33,7 @@ export default Ember.Component.extend(KeyboardShortcuts, {
     let screenPixelWidth = this.get('screenWidth') * this.get('squareSize');
     let screenPixelHeight = this.get('screenHeight') * this.get('squareSize');
 
-    ctx.clearRect(0, 0, screenPixelWidth, screenPixelHeight);
+    ctx.clearRect(0, 0, this.get('screenPixelWidth'), this.get('screenPixelHeight'));
   },
 
   movePacMan: function(direction, amount) {
@@ -64,6 +64,14 @@ export default Ember.Component.extend(KeyboardShortcuts, {
     let canvas = document.getElementById("myCanvas");
     let ctx = canvas.getContext("2d");
     return ctx;
+  }),
+
+  screenPixelWidth: Ember.computed(function() {
+    return this.get('screenWidth') * this.get('squareSize');
+  }),
+
+  screenPixelHeight: Ember.computed(function() {
+    return this.get('screenHeight') * this.get('squareSize');
   }),
 
   keyboardShortcuts: {
