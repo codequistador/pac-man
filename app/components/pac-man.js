@@ -8,10 +8,18 @@ export default Ember.Component.extend(KeyboardShortcuts, {
     this.drawCircle();
   },
 
-  // Drawing and erasing
+  // Component-level vars
   x: 1,
   y: 2,
   squareSize: 40,
+  walls: [
+    {x: 1, y: 1},
+    {x: 8, y: 5}
+  ],
+  screenWidth: 20,
+  screenHeight: 15,
+
+  // Drawing and erasing
   drawCircle: function() {
     let ctx = this.get('ctx');
     let x = this.get('x');
@@ -28,10 +36,6 @@ export default Ember.Component.extend(KeyboardShortcuts, {
     ctx.fill();
   },
 
-  walls: [
-    {x: 1, y: 1},
-    {x: 8, y: 5}
-  ],
   drawWalls: function() {
     let squareSize = this.get('squareSize');
     let ctx = this.get('ctx');
@@ -46,8 +50,6 @@ export default Ember.Component.extend(KeyboardShortcuts, {
     });
   },
 
-  screenWidth: 20,
-  screenHeight: 15,
   clearScreen: function() {
     let ctx = this.get('ctx');
 
