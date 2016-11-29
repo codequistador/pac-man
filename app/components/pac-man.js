@@ -57,7 +57,7 @@ export default Ember.Component.extend(KeyboardShortcuts, {
     ctx.arc(pixelX, pixelY, squareSize/radiusDivisor, 0, Math.PI * 2, false);
     ctx.closePath();
     ctx.fill();
-},
+  },
 
   offsetFor(coordinate, direction){
     let frameRatio = this.get('frameCycle') / this.get('framesPerMovement');
