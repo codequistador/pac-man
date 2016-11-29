@@ -3,12 +3,14 @@ import KeyboardShortcuts from 'ember-keyboard-shortcuts/mixins/component';
 
 export default Ember.Component.extend(KeyboardShortcuts, {
 
-  didInsertElement: function() {
+  didInsertElement() {
     this.drawGrid();
     this.drawPac();
   },
 
   // Component-level vars
+  score: 0,
+  levelNumber: 1,
   x: 1,
   y: 2,
   squareSize: 40,
@@ -43,7 +45,7 @@ export default Ember.Component.extend(KeyboardShortcuts, {
     this.drawCircle(x, y, radiusDivisor);
   },
 
-  drawCircle: function(x, y, radiusDivisor) {
+  drawCircle(x, y, radiusDivisor) {
     let ctx = this.get('ctx');
     let squareSize = this.get('squareSize');
 
@@ -57,7 +59,7 @@ export default Ember.Component.extend(KeyboardShortcuts, {
     ctx.fill();
   },
 
-  drawWall: function(x, y) {
+  drawWall(x, y) {
     let ctx = this.get('ctx');
     let squareSize = this.get('squareSize');
 
@@ -68,7 +70,7 @@ export default Ember.Component.extend(KeyboardShortcuts, {
                  squareSize);
   },
 
-  drawGrid: function() {
+  drawGrid() {
     let grid = this.get('grid');
     grid.forEach((row, rowIndex)=>{
       row.forEach((cell, columnIndex)=>{
@@ -82,14 +84,14 @@ export default Ember.Component.extend(KeyboardShortcuts, {
     });
   },
 
-  clearScreen: function() {
+  clearScreen() {
     let ctx = this.get('ctx');
 
     ctx.clearRect(0, 0, this.get('screenPixelWidth'), this.get('screenPixelHeight'));
   },
 
   // Moving and collisions
-  movePacMan: function(direction, amount) {
+  movePacMan(direction, amount) {
     this.incrementProperty(direction, amount);
 
     if (this.collidedWithBorder() || this.collidedWithWall()) {
@@ -103,17 +105,23 @@ export default Ember.Component.extend(KeyboardShortcuts, {
     this.drawPac();
   },
 
-  processAnyPellets: function() {
+  processAnyPellets() {
     let x = this.get('x');
     let y = this.get('y');
     let grid = this.get('grid');
 
     if(grid[y][x] === 2) {
       grid[y][x] = 0;
+      this.incrementProperty('score');
+
+      if(this.levelComplete()){
+        this.incrementProperty('levelNumber');
+        this.restartLevel();
+      }
     }
   },
 
-  collidedWithBorder: function() {
+  collidedWithBorder() {
     let x = this.get('x');
     let y = this.get('y');
     let screenHeight = this.get('screenHeight');
@@ -126,12 +134,41 @@ export default Ember.Component.extend(KeyboardShortcuts, {
     return pacOutOfBounds;
   },
 
-  collidedWithWall: function() {
+  collidedWithWall() {
     let x = this.get('x');
     let y = this.get('y');
     let grid = this.get('grid');
 
     return grid[y][x] === 1;
+  },
+
+  // Score and Levels
+  levelComplete() {
+    let hasPelletsLeft = false;
+    let grid = this.get('grid');
+
+    grid.forEach((row)=>{
+      row.forEach((cell)=>{
+        if(cell === 2){
+          hasPelletsLeft = true;
+        }
+      });
+    });
+    return !hasPelletsLeft;
+  },
+
+  restartLevel() {
+    this.set('x', 0);
+    this.set('y', 0);
+
+    let grid = this.get('grid');
+    grid.forEach((row, rowIndex)=>{
+      row.forEach((cell, columnIndex)=>{
+        if(cell === 0){
+          grid[rowIndex][columnIndex] = 2;
+        }
+      });
+    });
   },
 
   // Computed Properties
@@ -150,10 +187,10 @@ export default Ember.Component.extend(KeyboardShortcuts, {
   }),
 
   keyboardShortcuts: {
-    up: function() { this.movePacMan('y', -1); },
-    down: function() { this.movePacMan('y', 1); },
-    left: function() { this.movePacMan('x', -1); },
-    right: function() { this.movePacMan('x', 1); },
+    up() { this.movePacMan('y', -1); },
+    down() { this.movePacMan('y', 1); },
+    left() { this.movePacMan('x', -1); },
+    right() { this.movePacMan('x', 1); },
   },
 
 });
