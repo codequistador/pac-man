@@ -14,8 +14,6 @@ export default Ember.Component.extend(KeyboardShortcuts, {
   x: 1,
   y: 2,
   squareSize: 40,
-  isMoving: false,
-  direction: 'stopped',
   // 0 is a blank space
   // 1 is a wall
   // 2 is a pellet
@@ -35,30 +33,35 @@ export default Ember.Component.extend(KeyboardShortcuts, {
   }),
 
   // Drawing and erasing
-  drawPac() {
+  drawPac(){
     let x = this.get('x');
     let y = this.get('y');
     let radiusDivisor = 2;
-    this.drawCircle(x, y, radiusDivisor);
+    this.drawCircle(x, y, radiusDivisor, this.get('direction'));
   },
 
-  drawPellet(x, y) {
+  drawPellet(x, y){
     let radiusDivisor = 6;
-    this.drawCircle(x, y, radiusDivisor);
+    this.drawCircle(x, y, radiusDivisor, 'stopped');
   },
 
-  drawCircle(x, y, radiusDivisor) {
+  drawCircle(x, y, radiusDivisor, direction) {
     let ctx = this.get('ctx');
     let squareSize = this.get('squareSize');
 
-    let pixelX = (x+1/2) * squareSize;
-    let pixelY = (y+1/2) * squareSize;
+    let pixelX = (x + 1/2 + this.offsetFor('x', direction)) * squareSize;
+    let pixelY = (y + 1/2 + this.offsetFor('y', direction)) * squareSize;
 
     ctx.fillStyle = '#000';
     ctx.beginPath();
     ctx.arc(pixelX, pixelY, squareSize/radiusDivisor, 0, Math.PI * 2, false);
     ctx.closePath();
     ctx.fill();
+},
+
+  offsetFor(coordinate, direction){
+    let frameRatio = this.get('frameCycle') / this.get('framesPerMovement');
+    return this.get(`directions.${direction}.${coordinate}`) * frameRatio;
   },
 
   drawWall(x, y) {
@@ -93,17 +96,17 @@ export default Ember.Component.extend(KeyboardShortcuts, {
   },
 
   // Moving and collisions
-  movePacMan(direction) {
-    if(!this.pathBlockedInDirection(direction)) {
-      this.set('x', this.nextCoordinate('x', direction));
-      this.set('y', this.nextCoordinate('y', direction));
 
-      this.processAnyPellets();
+  isMoving: false,
+  direction: 'stopped',
+  movePacMan(direction){
+    if(this.get('isMoving') || this.pathBlockedInDirection(direction)){
+      // do nothing, just wait it out
+    } else {
+      this.set('direction', direction);
+      this.set('isMoving', true);
+      this.movementLoop();
     }
-
-    this.clearScreen();
-    this.drawGrid();
-    this.drawPac();
   },
 
   pathBlockedInDirection(direction) {
@@ -120,6 +123,28 @@ export default Ember.Component.extend(KeyboardShortcuts, {
 
   nextCoordinate(coordinate, direction){
     return this.get(coordinate) + this.get(`directions.${direction}.${coordinate}`);
+  },
+
+  frameCycle: 1,
+  framesPerMovement: 30,
+  movementLoop(){
+    if(this.get('frameCycle') === this.get('framesPerMovement')){
+      let direction = this.get('direction');
+      this.set('x', this.nextCoordinate('x', direction));
+      this.set('y', this.nextCoordinate('y', direction));
+
+      this.set('isMoving', false);
+      this.set('frameCycle', 1);
+
+      this.processAnyPellets();
+    } else {
+      this.incrementProperty('frameCycle');
+      Ember.run.later(this, this.movementLoop, 1000/60);
+    }
+
+    this.clearScreen();
+    this.drawGrid();
+    this.drawPac();
   },
 
   processAnyPellets() {
