@@ -4,8 +4,7 @@ import KeyboardShortcuts from 'ember-keyboard-shortcuts/mixins/component';
 export default Ember.Component.extend(KeyboardShortcuts, {
 
   didInsertElement() {
-    this.drawGrid();
-    this.drawPac();
+    this.movementLoop();
   },
 
   // Component-level vars
@@ -98,7 +97,7 @@ export default Ember.Component.extend(KeyboardShortcuts, {
   // Moving and collisions
 
   isMoving: false,
-  direction: 'stopped',
+  direction: 'down',
   movePacMan(direction){
     if(this.get('isMoving') || this.pathBlockedInDirection(direction)){
       // do nothing, just wait it out
@@ -133,10 +132,11 @@ export default Ember.Component.extend(KeyboardShortcuts, {
       this.set('x', this.nextCoordinate('x', direction));
       this.set('y', this.nextCoordinate('y', direction));
 
-      this.set('isMoving', false);
       this.set('frameCycle', 1);
+      this.set('isMoving', false);
 
       this.processAnyPellets();
+      Ember.run.later(this, this.movePacMan, direction, 1000/60);
     } else {
       this.incrementProperty('frameCycle');
       Ember.run.later(this, this.movementLoop, 1000/60);
@@ -215,6 +215,7 @@ export default Ember.Component.extend(KeyboardShortcuts, {
     'stopped': {x: 0, y: 0},
   },
 
+  intent: 'down',
   keyboardShortcuts: {
     up() { this.movePacMan('up'); },
     down() { this.movePacMan('down'); },
