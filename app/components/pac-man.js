@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import Pac from '../models/pac';
 import KeyboardShortcuts from 'ember-keyboard-shortcuts/mixins/component';
 
 export default Ember.Component.extend(KeyboardShortcuts, {
