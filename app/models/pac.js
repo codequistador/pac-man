@@ -33,7 +33,7 @@ export default Ember.Object.extend(SharedStuff, {
     let nextX = this.nextCoordinate('x', direction);
     let nextY = this.nextCoordinate('y', direction);
 
-    return this.get(`grid.${nextY}.${nextX}`);
+    return this.get(`level.grid.${nextY}.${nextX}`);
   },
 
   nextCoordinate(coordinate, direction){
@@ -63,5 +63,11 @@ export default Ember.Object.extend(SharedStuff, {
     this.set('frameCycle', 1);
   },
 
+  restart(){
+    this.set('x', 0);
+    this.set('y', 0);
+    this.set('frameCycle', 0);
+    this.set('direction', 'stopped');
+  }
 
 });
