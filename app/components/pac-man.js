@@ -96,15 +96,13 @@ export default Ember.Component.extend(KeyboardShortcuts, {
 
   // Moving and collisions
 
-  isMoving: false,
   direction: 'down',
-  movePacMan(direction){
-    if(this.get('isMoving') || this.pathBlockedInDirection(direction)){
-      // do nothing, just wait it out
+  changePacDirection(direction){
+    let intent = this.get('intent');
+    if(this.pathBlockedInDirection(intent)) {
+      this.set('direction', 'stopped');
     } else {
-      this.set('direction', direction);
-      this.set('isMoving', true);
-      this.movementLoop();
+      this.set('direction', intent);
     }
   },
 
@@ -133,18 +131,19 @@ export default Ember.Component.extend(KeyboardShortcuts, {
       this.set('y', this.nextCoordinate('y', direction));
 
       this.set('frameCycle', 1);
-      this.set('isMoving', false);
-
       this.processAnyPellets();
-      Ember.run.later(this, this.movePacMan, direction, 1000/60);
+      this.changePacDirection();
+    } else if(this.get('direction') === 'stopped') {
+      this.changePacDirection();
     } else {
       this.incrementProperty('frameCycle');
-      Ember.run.later(this, this.movementLoop, 1000/60);
     }
 
     this.clearScreen();
     this.drawGrid();
     this.drawPac();
+
+    Ember.run.later(this, this.movementLoop, 1000/60);
   },
 
   processAnyPellets() {
@@ -217,10 +216,10 @@ export default Ember.Component.extend(KeyboardShortcuts, {
 
   intent: 'down',
   keyboardShortcuts: {
-    up() { this.movePacMan('up'); },
-    down() { this.movePacMan('down'); },
-    left() { this.movePacMan('left'); },
-    right() { this.movePacMan('right'); },
+    up() { this.set('intent', 'up'); },
+    down() { this.set('intent', 'down'); },
+    left() { this.set('intent', 'left'); },
+    right() { this.set('intent', 'right'); },
   },
 
 });
