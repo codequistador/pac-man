@@ -73,7 +73,7 @@ export default Ember.Component.extend(KeyboardShortcuts, SharedStuff, {
 
       if(this.level.isComplete()){
         this.incrementProperty('levelNumber');
-        this.restartLevel();
+        this.level.restart();
       }
     }
   },
