@@ -15,4 +15,12 @@ export default Level.extend({
     x: 4,
     y: 4,
   },
+  startingGhosts: [{
+    x: 0,
+    y: 0
+  }, {
+    x: 5,
+    y: 0
+  }],
+  
 });
