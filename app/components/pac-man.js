@@ -64,6 +64,7 @@ export default Ember.Component.extend(KeyboardShortcuts, SharedStuff, {
 
   loop(){
     this.get('pac').move();
+    this.get('ghost').move();
 
     this.processAnyPellets();
 
