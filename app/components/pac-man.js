@@ -4,6 +4,7 @@ import SharedStuff from '../mixins/shared-stuff';
 import Pac from '../models/pac';
 import Level from '../models/level';
 import Level2 from '../models/level2';
+import Ghost from '../models/ghost';
 
 export default Ember.Component.extend(KeyboardShortcuts, SharedStuff, {
 
@@ -13,9 +14,15 @@ export default Ember.Component.extend(KeyboardShortcuts, SharedStuff, {
     let pac = Pac.create({
       level: level,
       x: level.get('startingPac.x'),
-      y: level.get('startingPac.y')
+      y: level.get('startingPac.y'),
     });
     this.set('pac', pac);
+    let ghost = Ghost.create({
+      level: level,
+      x: 0,
+      y: 0
+    });
+    this.set('ghost', ghost);
     this.loop();
   },
 
@@ -26,7 +33,7 @@ export default Ember.Component.extend(KeyboardShortcuts, SharedStuff, {
     let ctx = this.get('ctx');
     let squareSize = this.get('level.squareSize');
 
-    ctx.fillStyle = '#000';
+    ctx.fillStyle = '#00AFAA';
     ctx.fillRect(x * squareSize,
                  y * squareSize,
                  squareSize,
@@ -47,7 +54,7 @@ export default Ember.Component.extend(KeyboardShortcuts, SharedStuff, {
   },
   drawPellet(x, y){
     let radiusDivisor = 6;
-    this.drawCircle(x, y, radiusDivisor, 'stopped');
+    this.drawCircle(x, y, radiusDivisor, 'stopped', '#77777A');
   },
 
   clearScreen() {
@@ -63,6 +70,7 @@ export default Ember.Component.extend(KeyboardShortcuts, SharedStuff, {
     this.clearScreen();
     this.drawGrid();
     this.get('pac').draw();
+    this.get('ghost').draw();
 
     Ember.run.later(this, this.loop, 1000/60);
   },
