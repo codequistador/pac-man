@@ -12,6 +12,10 @@ export default Ember.Object.extend({
     [2, 2, 2, 2, 2, 2, 2, 1],
     [1, 2, 2, 2, 2, 2, 2, 1],
   ],
+  startingPac: {
+    x: 0,
+    y: 1
+  },
 
   squareSize: 40,
   width: Ember.computed(function(){

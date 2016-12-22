@@ -2,11 +2,11 @@ import Ember from 'ember';
 import SharedStuff from '../mixins/shared-stuff';
 
 export default Ember.Object.extend(SharedStuff, {
-  direction: 'down',
+  direction: 'stopped',
   intent: 'down',
-
-  x: 1,
-  y: 2,
+  level: null,
+  x: null,
+  y: null,
 
   draw(){
     let x = this.get('x');
@@ -64,8 +64,8 @@ export default Ember.Object.extend(SharedStuff, {
   },
 
   restart(){
-    this.set('x', 0);
-    this.set('y', 0);
+    this.set('x', this.get('level.startingPac.x'));
+    this.set('y', this.get('level.startingPac.y'));
     this.set('frameCycle', 0);
     this.set('direction', 'stopped');
   }
