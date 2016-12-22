@@ -6,7 +6,7 @@ import Level from '../models/level';
 import Level2 from '../models/level2';
 import Ghost from '../models/ghost';
 
-export default Ember.Component.extend(KeyboardShortcuts, SharedStuff, {
+export default Ember.Component.extend(KeyboardShortcuts, SharedStuff,  {
 
   didInsertElement() {
     let level = Level2.create();
@@ -17,13 +17,20 @@ export default Ember.Component.extend(KeyboardShortcuts, SharedStuff, {
       y: level.get('startingPac.y'),
     });
     this.set('pac', pac);
-    let ghost = Ghost.create({
+    let ghost1 = Ghost.create({
       level: level,
       x: 0,
       y: 0,
       pac: pac
     });
-    this.set('ghost', ghost);
+    let ghost2 = Ghost.create({
+      level: level,
+      x: 5,
+      y: 0,
+      pac: pac
+    });
+    let ghosts = [ghost1, ghost2];
+    this.set('ghosts', ghosts);
     this.loop();
   },
 
@@ -65,14 +72,14 @@ export default Ember.Component.extend(KeyboardShortcuts, SharedStuff, {
 
   loop(){
     this.get('pac').move();
-    this.get('ghost').move();
 
     this.processAnyPellets();
 
     this.clearScreen();
     this.drawGrid();
     this.get('pac').draw();
-    this.get('ghost').draw();
+    this.get('ghosts').forEach( ghost => ghost.move() );
+    this.get('ghosts').forEach( ghost => ghost.draw() );
 
     Ember.run.later(this, this.loop, 1000/60);
   },
