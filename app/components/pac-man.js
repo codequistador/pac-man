@@ -2,21 +2,40 @@ import Ember from 'ember';
 import KeyboardShortcuts from 'ember-keyboard-shortcuts/mixins/component';
 import SharedStuff from '../mixins/shared-stuff';
 import Pac from '../models/pac';
-// import Level from '../models/level';
+import Level from '../models/level';
 import Level2 from '../models/level2';
 import Ghost from '../models/ghost';
 
 export default Ember.Component.extend(KeyboardShortcuts, SharedStuff,  {
 
   didInsertElement() {
-    let level = Level2.create();
+    this.startNewLevel();
+    this.loop();
+  },
+
+  score: 0,
+  levelNumber: 1,
+  lives: 3,
+  levels: [Level, Level2],
+
+  loadNewLevel(){
+    let levelIndex = (this.get('levelNumber') - 1) % this.get('levels.length');
+    let levelClass = this.get('levels')[levelIndex];
+    return levelClass.create();
+  },
+
+  startNewLevel(){
+    let level = this.loadNewLevel();
+    level.restart();
     this.set('level', level);
+
     let pac = Pac.create({
       level: level,
       x: level.get('startingPac.x'),
       y: level.get('startingPac.y'),
     });
     this.set('pac', pac);
+    
     let ghosts = level.get('startingGhosts').map((startingPosition)=> {
       return Ghost.create({
         level: level,
@@ -26,12 +45,7 @@ export default Ember.Component.extend(KeyboardShortcuts, SharedStuff,  {
       });
     });
     this.set('ghosts', ghosts);
-    this.loop();
   },
-
-  score: 0,
-  levelNumber: 1,
-  lives: 3,
   
   drawWall(x, y) {
     let ctx = this.get('ctx');
@@ -96,8 +110,7 @@ export default Ember.Component.extend(KeyboardShortcuts, SharedStuff,  {
 
       if(this.level.isComplete()){
         this.incrementProperty('levelNumber');
-        this.level.restart();
-        this.restart();
+        this.startNewLevel();
       }
     }
   },
@@ -113,7 +126,8 @@ export default Ember.Component.extend(KeyboardShortcuts, SharedStuff,  {
     if(this.get('lives') <= 0) {
       this.set('score', 0);
       this.set('lives', 3);
-      this.get('level').restart();
+      this.set('levelNumber', 1);
+      this.startNewLevel();
     }
     this.get('pac').restart();
     this.get('ghosts').forEach( ghost => ghost.restart() );
