@@ -46,9 +46,9 @@ export default Ember.Mixin.create({
     this.get(`directions.${direction}.${coordinate}`);
     if(this.get('level.teleport')) {
       if(direction === 'up' || direction === 'down') {
-        return this.modulo(next, this.get('level.height'))
+        return this.modulo(next, this.get('level.height'));
       } else {
-        return this.modulo(next, this.get('level.width'))
+        return this.modulo(next, this.get('level.width'));
       }
     } else {
       return next;

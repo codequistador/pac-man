@@ -67,12 +67,19 @@ export default Ember.Component.extend(KeyboardShortcuts, SharedStuff,  {
         if(cell === 2){
           this.drawPellet(columnIndex, rowIndex);
         }
+        if(cell === 3){
+          this.drawPowerPellet(columnIndex, rowIndex);
+        }
       });
     });
   },
   drawPellet(x, y){
     let radiusDivisor = 6;
     this.drawCircle(x, y, radiusDivisor, 'stopped', '#ee3f46');
+  },
+  drawPowerPellet(x, y){
+    let radiusDivisor = 4;
+    this.drawCircle(x, y, radiusDivisor, 'stopped', 'green');
   },
 
   clearScreen() {
@@ -112,6 +119,9 @@ export default Ember.Component.extend(KeyboardShortcuts, SharedStuff,  {
         this.incrementProperty('levelNumber');
         this.startNewLevel();
       }
+    } else if(grid[y][x] == 3){
+      grid[y][x] = 0;
+      this.set('pac.powerMode', true)
     }
   },
 
