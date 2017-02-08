@@ -72,7 +72,7 @@ export default Ember.Component.extend(KeyboardShortcuts, SharedStuff,  {
   },
   drawPellet(x, y){
     let radiusDivisor = 6;
-    this.drawCircle(x, y, radiusDivisor, 'stopped', '#77777A');
+    this.drawCircle(x, y, radiusDivisor, 'stopped', '#ee3f46');
   },
 
   clearScreen() {

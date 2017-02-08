@@ -13,7 +13,7 @@ export default Ember.Object.extend(SharedStuff, Movement, {
     let x = this.get('x');
     let y = this.get('y');
     let radiusDivisor = 2;
-    this.drawCircle(x, y, radiusDivisor, this.get('direction'), '#ee3f46');
+    this.drawCircle(x, y, radiusDivisor, this.get('direction'), '#77777A');
   },
   changeDirection() {
     let directions = ['left', 'right', 'up', 'down'];
