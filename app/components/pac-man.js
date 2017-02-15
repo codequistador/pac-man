@@ -119,9 +119,9 @@ export default Ember.Component.extend(KeyboardShortcuts, SharedStuff,  {
         this.incrementProperty('levelNumber');
         this.startNewLevel();
       }
-    } else if(grid[y][x] == 3){
+    } else if(grid[y][x] === 3){
       grid[y][x] = 0;
-      this.set('pac.powerMode', true)
+      this.set('pac.powerMode', true);
     }
   },
 
