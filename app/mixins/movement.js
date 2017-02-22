@@ -26,7 +26,7 @@ export default Ember.Mixin.create({
       if(this.get(timerName) > 0){
         this.decrementProperty(timerName);
       }
-    })
+    });
   },
 
   animationCompleted(){
