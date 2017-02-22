@@ -25,6 +25,10 @@ export default Ember.Object.extend({
     x: 5,
     y: 1
   }],
+  ghostRetreat: {
+    x: 4,
+    y: 3,
+  },
   teleport: true,
 
   squareSize: 40,

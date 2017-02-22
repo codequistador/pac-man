@@ -35,6 +35,13 @@ export default Ember.Object.extend(SharedStuff, Movement, {
       return Math.max(desireabilityOfDirection, 0) + 0.2; // 0.2 is randomness... can be modified to change gameplay
     }
   },
+  removed: false,
+  retreat() {
+    this.set('removed', true);
+    this.set('frameCycle', 0);
+    this.set('x', this.get('level.ghostRetreat.x'));
+    this.set('y', this.get('level.ghostRetreat.y'));
+  },
   getRandomItem(list, weight) {
     var total_weight = weight.reduce(function (prev, cur, i, arr) {
       return prev + cur;
