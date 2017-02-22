@@ -13,8 +13,19 @@ export default Ember.Object.extend(SharedStuff, Movement, {
     let x = this.get('x');
     let y = this.get('y');
     let radiusDivisor = 2;
-    this.drawCircle(x, y, radiusDivisor, this.get('direction'), '#77777A');
+    this.drawCircle(x, y, radiusDivisor, this.get('direction'), this.get('color'));
   },
+  color: Ember.computed('retreatTime', function(){
+    let timerPercentage = this.get('retreatTime') / this.get('maxRetreatTime');
+    let retreated = {r: 0, g: 0, b: 0};
+    let normal = {r: 100, g: 40, b: 40};
+    let [r, g, b] = ['r', 'g', 'b'].map(function(rgbSelector){
+      let color =  retreated[rgbSelector] * timerPercentage +
+                   normal[rgbSelector] * (1 - timerPercentage);
+      return Math.round(color);
+    });
+    return `rgb(${r}%,${g}%,${b}%)`;
+  }),
   changeDirection() {
     let directions = ['left', 'right', 'up', 'down'];
     let directionWeights = directions.map((direction)=>{
@@ -35,8 +46,12 @@ export default Ember.Object.extend(SharedStuff, Movement, {
       return Math.max(desireabilityOfDirection, 0) + 0.2; // 0.2 is randomness... can be modified to change gameplay
     }
   },
-  removed: false,
+  removed: Ember.computed.gt('retreatTime', 0),
+  retreatTime: 0,
+  maxRetreatTime: 500,
+  timers: ['retreatTime'],
   retreat() {
+    this.set('retreatTime', this.get('maxRetreatTime'));
     this.set('removed', true);
     this.set('frameCycle', 0);
     this.set('x', this.get('level.ghostRetreat.x'));

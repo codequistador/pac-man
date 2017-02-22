@@ -5,6 +5,7 @@ export default Ember.Mixin.create({
   y: null,
   level: null,
   direction: 'down',
+  timers: [],
 
   move(){
     if(this.get('removed')) {
@@ -17,6 +18,15 @@ export default Ember.Mixin.create({
     } else {
       this.incrementProperty('frameCycle');
     }
+    this.tickTimers();
+  },
+
+  tickTimers(){
+    this.get('timers').forEach((timerName)=>{
+      if(this.get(timerName) > 0){
+        this.decrementProperty(timerName);
+      }
+    })
   },
 
   animationCompleted(){
